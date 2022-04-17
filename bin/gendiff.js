@@ -1,4 +1,5 @@
 #!/usr/bin/env/node
+import _ from 'lodash';
 import { program } from 'commander';
 
 program
@@ -7,3 +8,5 @@ program
   .arguments('<filepath1> <filepath2>')
   .option('-f, --format <type>', 'output format')
   .parse();
+
+
