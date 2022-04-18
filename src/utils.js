@@ -9,11 +9,10 @@ import { cwd } from 'process';
  * @example
  * getPath('file.json'); // users/anonimous/project/src/file.json
  */
-export const getPath = (filename) => resolve(cwd(), filename);
+export const getPath = (filename) => resolve(cwd(), './__fixtures__/', filename);
 
 /**
  * Read the entire contents of a file
  * @param {string} filename Name of file
  */
 export const readFileContent = (filename) => readFileSync(getPath(filename), 'utf-8');
-
