@@ -12,10 +12,10 @@ const __dirname = path.dirname(__filename);
  * @example
  * getPath('file.json'); // users/anonimous/project/src/file.json
  */
-export const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
+const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 
 /**
  * Read the entire contents of a file
  * @param {string} filename Name of file
  */
-export const readFileContent = (filename) => readFileSync(getFixturePath(filename), 'utf-8');
+export default (filename) => readFileSync(getFixturePath(filename), 'utf-8');

@@ -1,8 +1,19 @@
+import { load } from 'js-yaml';
+
 /**
- * Parse object
- * @param {Object} coll Object to be parsed
- * @returns {Object} Parsed object
- * @example
- * parseObject({"one" : 1}); // {one: 1}
+ * Parse content and process to JS
+ * @param {string} filename Filename to be parsed and processed
+ * @returns Content processed to JS according to the extension
  */
-export default (coll) => JSON.parse(coll);
+export default (content, extension) => {
+  switch (extension) {
+    case '.json':
+      return JSON.parse(content);
+    case '.yaml':
+      return load(content);
+    case '.yml':
+      return load(content);
+    default:
+      throw new Error(`UNKNOWN FORMAT: ${extension}`);
+  }
+};
