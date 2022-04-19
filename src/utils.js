@@ -1,6 +1,9 @@
-import { resolve } from 'path';
+import path from 'path';
 import { readFileSync } from 'fs';
-import { cwd } from 'process';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Return an absolute path to a file
@@ -9,10 +12,10 @@ import { cwd } from 'process';
  * @example
  * getPath('file.json'); // users/anonimous/project/src/file.json
  */
-export const getPath = (filename) => resolve(cwd(), './__fixtures__/', filename);
+export const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
 
 /**
  * Read the entire contents of a file
  * @param {string} filename Name of file
  */
-export const readFileContent = (filename) => readFileSync(getPath(filename), 'utf-8');
+export const readFileContent = (filename) => readFileSync(getFixturePath(filename), 'utf-8');
