@@ -1,6 +1,37 @@
 import buildTree from '../src/tree.js';
 import _ from 'lodash';
 
+/**
+ * Set and offset from object property
+ * @param {string} replacer Kind of offset
+ * @param {*} depth Depth of nesting
+ * @example
+ * const offset('+', 2);
+ * {
+ * ++ /.../
+ * ++++ /.../
+ * ++ /.../
+ * }
+ */
+ const offset = (replacer = ' ', depth = 1) => replacer.repeat(depth * 2);
+
+/**
+ * Return rendered value
+ * @param {string | number | boolean | object} currentValue Value
+ * @param {number} depth Depth of nesting
+ * @returns Rendered value
+ */
+ const stringify = (currentValue, depth) => {
+  if (!_.isPlainObject(currentValue)) {
+    return `${currentValue}`;
+  }
+  const keys = Object.keys(currentValue);
+  const result = keys.map((key) => {
+    return `${offset(' ', depth)}${key}: ${stringify(currentValue[key], depth + 1)}`;
+  }).join('\n');
+  return `{\n${result}\n${offset(' ', depth - 1)}}`;
+};
+
 const first = {
   "common": {
     "setting1": "Value 1",
@@ -59,14 +90,3 @@ const second = {
     "fee": 100500
   }
 };
-
-const stringify = (value, replacer = ' ', count = 2) => {
-  if (_.isPlainObject(value)) {
-    return `${value}`;
-  }
-  const keys = Object.keys(value);
-  const result = keys.map(key => {
-    return `${replacer.repeat(count)}${key}: ${stringify(value[key], replacer, count + 2)}`
-  }).join('\n');
-  return `{\n${result}\n${replacer.repeat(count - 2)}}`;
-}

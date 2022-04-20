@@ -1,6 +1,12 @@
 import _, { get } from 'lodash';
 import genDiff from '.';
 
+/**
+ * Generate tree based on object's difference
+ * @param {object} first First object
+ * @param {object} second Second object
+ * @returns {object} Tree
+ */
 const genTree = (first, second) => {
   const keys1 = Object.keys(first);
   const keys2 = Object.keys(second);
