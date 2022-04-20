@@ -1,67 +1,28 @@
-import _ from 'lodash';
+import _, { get } from 'lodash';
+import genDiff from '.';
 
-// export default (data1, data2) => {
-//   const keys1 = Object.keys(data1);
-//   const keys2 = Object.keys(data2);
-//   const sortedKeys = _.sortBy(_.union(keys1, keys2));
-//   const result = sortedKeys.map((key) => {
-//     if (!_.includes(keys2, key)) {
-//       return ` - ${key}: ${data1[key]}`;
-//     }
-//     if (!_.includes(keys1, key)) {
-//       return ` + ${key}: ${data2[key]}`;
-//     }
-//     if (data1[key] === data2[key]) {
-//       return `   ${key}: ${data2[key]}`;
-//     }
-//     return ` - ${key}: ${data1[key]}\n  + ${key}: ${data2[key]}`;
-//   }).join('\n ');
-//   return `{\n ${result}\n}`;
-// };
-
-const buildTree = (first, second) => {
+const genTree = (first, second) => {
   const keys1 = Object.keys(first);
   const keys2 = Object.keys(second);
   const sortedKeys = _.sortBy(_.union(keys1, keys2));
   const result = sortedKeys.map((key) => {
-    const value1 = first[key];
-    const value2 = second[key];
-    if (_.isPlainObject(value1) && _.isPlainObject(value2)) {
-      return {
-        key,
-        type: 'nested',
-        children: [buildTree(value1, value2)],
-      };
+    if (_.isPlainObject(first[key]) && _.isPlainObject(second[key])) {
+      return { key, type: 'nested', children: [buildTree(first[key], second[key])], };
     }
     if (!_.includes(keys1, key)) {
-      return {
-        key,
-        type: 'added',
-        value: value2,
-      };
+      return { key, type: 'added', value: second[key], };
     }
     if (!_.includes(keys2, key)) {
-      return {
-        key,
-        type: 'deleted',
-        value: value1,
-      };
+      return { key, type: 'deleted', value: first[key], };
     }
-    if (value1 === value2) {
-      return {
-        key,
-        type: 'unchanged',
-        value: value1,
-      };
+    if (first[key] === second[key]) {
+      return { key, type: 'unchanged', value: first[key], };
     }
-    return {
-      key,
-      type: 'changed',
-      value1,
-      value2,
-    };
+    return { key, type: 'changed', value1 : first[key],  value2 : second[key], };
   });
   return result;
 };
+
+const buildTree = (first, second) => ({type: 'root', children: genTree(first, second)});
 
 export default buildTree;

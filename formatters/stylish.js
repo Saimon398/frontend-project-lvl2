@@ -70,5 +70,3 @@ const stringify = (value, replacer = ' ', count = 2) => {
   }).join('\n');
   return `{\n${result}\n${replacer.repeat(count - 2)}}`;
 }
-
-
