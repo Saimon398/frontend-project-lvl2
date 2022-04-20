@@ -1,0 +1,9 @@
+{
+  - boolean: false
+  + boolean: true
+    host: google.ru
+  - russia: best
+  + russia: worst
+  - usa: worst
+  + usa: best
+}
