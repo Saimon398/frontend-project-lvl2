@@ -34,7 +34,7 @@ const stringify = (currentValue, depth = 1) => {
  * @param {object} tree Tree
  * @returns Parsed and styled tree
  */
-const stylish = (tree) => {
+export default (tree) => {
   const iter = (node, depth) => {
     const {
       key, type, value, children, value1, value2,
@@ -46,7 +46,7 @@ const stylish = (tree) => {
       }
       case 'nested': {
         const result = children.flatMap((child) => iter(child, depth + 1));
-        return `${offset(' ', depth)}  ${key}: ${result.join('\n')}${offset(' ', depth)}`;
+        return `${offset(' ', depth)}${key}: ${result.join('\n')}${offset(' ', depth)}`;
       }
       case 'deleted': {
         return `${offset(' ', depth)}- ${key}: ${stringify(value, depth)}`;
@@ -60,7 +60,7 @@ const stylish = (tree) => {
         return `${deleted}\n${added}`;
       }
       case 'unchanged': {
-        return `${offset(' ', depth)} ${key}: ${stringify(value, depth)}`;
+        return `${offset(' ', depth)}  ${key}: ${stringify(value, depth)}`;
       }
       default:
         throw new Error(`Unknown type of node: ${type}`);
@@ -68,5 +68,3 @@ const stylish = (tree) => {
   };
   return iter(tree, 0);
 };
-
-export default stylish;
