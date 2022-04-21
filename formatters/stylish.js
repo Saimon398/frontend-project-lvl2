@@ -1,4 +1,3 @@
-import buildTree from '../src/tree.js';
 import _ from 'lodash';
 
 /**
@@ -13,7 +12,7 @@ import _ from 'lodash';
  * ++ /.../
  * }
  */
- const offset = (replacer = ' ', depth = 1) => replacer.repeat(depth * 2);
+const offset = (replacer = ' ', depth = 1) => replacer.repeat(depth * 2);
 
 /**
  * Return rendered value
@@ -21,72 +20,53 @@ import _ from 'lodash';
  * @param {number} depth Depth of nesting
  * @returns Rendered value
  */
- const stringify = (currentValue, depth) => {
+const stringify = (currentValue, depth = 1) => {
   if (!_.isPlainObject(currentValue)) {
     return `${currentValue}`;
   }
   const keys = Object.keys(currentValue);
-  const result = keys.map((key) => {
-    return `${offset(' ', depth)}${key}: ${stringify(currentValue[key], depth + 1)}`;
-  }).join('\n');
+  const result = keys.map((key) => `${offset(' ', depth)}${key}: ${stringify(currentValue[key], depth + 1)}`).join('\n');
   return `{\n${result}\n${offset(' ', depth - 1)}}`;
 };
 
-const first = {
-  "common": {
-    "setting1": "Value 1",
-    "setting2": 200,
-    "setting3": true,
-    "setting6": {
-      "key": "value",
-      "doge": {
-        "wow": ""
+/**
+ * Parse tree and style in certain format
+ * @param {object} tree Tree
+ * @returns Parsed and styled tree
+ */
+const stylish = (tree) => {
+  const iter = (node, depth) => {
+    const {
+      key, type, value, children, value1, value2,
+    } = node;
+    switch (type) {
+      case 'root': {
+        const result = children.flatMap((child) => iter(child, depth + 1));
+        return `{\n${result.join('\n')}\n${offset(' ', depth)}}`;
       }
+      case 'nested': {
+        const result = children.flatMap((child) => iter(child, depth + 1));
+        return `${offset(' ', depth)}  ${key}: ${result.join('\n')}${offset(' ', depth)}`;
+      }
+      case 'deleted': {
+        return `${offset(' ', depth)}- ${key}: ${stringify(value, depth)}`;
+      }
+      case 'added': {
+        return `${offset(' ', depth)}+ ${key}: ${stringify(value, depth)}`;
+      }
+      case 'changed': {
+        const deleted = `${offset(' ', depth)}- ${key}: ${stringify(value1, depth)}`;
+        const added = `${offset(' ', depth)}+ ${key}: ${stringify(value2, depth)}`;
+        return `${deleted}\n${added}`;
+      }
+      case 'unchanged': {
+        return `${offset(' ', depth)} ${key}: ${stringify(value, depth)}`;
+      }
+      default:
+        throw new Error(`Unknown type of node: ${type}`);
     }
-  },
-  "group1": {
-    "baz": "bas",
-    "foo": "bar",
-    "nest": {
-      "key": "value"
-    }
-  },
-  "group2": {
-    "abc": 12345,
-    "deep": {
-      "id": 45
-    }
-  }
+  };
+  return iter(tree, 0);
 };
 
-const second = {
-  "common": {
-    "follow": false,
-    "setting1": "Value 1",
-    "setting3": null,
-    "setting4": "blah blah",
-    "setting5": {
-      "key5": "value5"
-    },
-    "setting6": {
-      "key": "value",
-      "ops": "vops",
-      "doge": {
-        "wow": "so much"
-      }
-    }
-  },
-  "group1": {
-    "foo": "bar",
-    "baz": "bars",
-    "nest": "str"
-  },
-  "group3": {
-    "deep": {
-      "id": {
-        "number": 45
-      }
-    },
-    "fee": 100500
-  }
-};
+export default stylish;
