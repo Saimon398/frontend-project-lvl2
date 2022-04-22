@@ -14,3 +14,7 @@ describe.each(cases)('compare %s and %s in format %s and show %s', (file1, file2
     expect(genDiff(file1, file2, formatName)).toBe(expected);
   });
 });
+
+
+
+
